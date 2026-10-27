@@ -37,12 +37,27 @@ def add_task(description):
     new_task = {
         "id": new_id,
         "description": description,
+        "status": "todo",
         "createdAt": now,
         "updatedAt": now,
     }
     tasks.append(new_task)
     save_tasks(tasks= tasks)
     print(f"Task added succesfully (ID: {new_id}) ")
+
+def list_tasks(status=None):
+    tasks = load_tasks()
+
+    if tasks:
+        if status == None:
+            for task in tasks:
+                print(f"[{task["id"]}] {task["description"]}")
+        else:
+            for task in tasks:
+                if task["status"] == status:
+                   print(f"[{task['id']}] {task['description']} ({task['status']})") 
+    else:
+        print(f"Upload the tasks, the list is empty")
 
 def main():
     # Kullanıcı hiç komut yazmadıysa
@@ -59,7 +74,10 @@ def main():
        else:
             add_task(sys.argv[2])
     elif command == "list":
-        print("list komutu calisti")
+        if len(sys.argv) < 3:
+             list_tasks()       
+        else:
+            list_tasks(sys.argv[2])
     else:
         print(f"Bilinmeyen komut: {command}")
 
