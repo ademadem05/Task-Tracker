@@ -70,10 +70,28 @@ def mark_task(task_id, new_status):
             print(f"Task {task_id} marked as {new_status}")
             return
 
-        print(f"Task with ID {task_id} not found")
+    print(f"Task with ID {task_id} not found")
 
+def delete(task_id):
+    tasks = load_tasks()
+    for task in tasks:
+        if task["id"] == task_id:
+            tasks.remove(task)
+            save_tasks(tasks)
+            print(f"Task {task_id} deleted successfully")
+            return
+    print(f"Task {task_id} is not found")
 
-
+def update(task_id, new_task):
+    tasks = load_tasks()
+    for task in tasks:
+        if task["id"] == task_id:
+            task["description"] = new_task
+            task["updatedAt"] = datetime.now().isoformat()
+            save_tasks(tasks)
+            print(f"Task {task_id} updated successfully")
+            return
+    print(f"Task {task_id} is not found")
 
 def main():
     # Kullanıcı hiç komut yazmadıysa
@@ -94,7 +112,6 @@ def main():
              list_tasks()       
         else:
             list_tasks(sys.argv[2])
-
     elif command == "mark-in-progress":
         if len(sys.argv) < 3:
             print("Error: please provide a task ID")
@@ -110,8 +127,26 @@ def main():
         else:
             task_id = int(sys.argv[2])
             mark_task(task_id, "done")
+
+    elif command == "delete":
+        if len(sys.argv) < 3:
+            print("Error: please provide a task ID")
+            print("Example: python task_cli.py delete 1")
+        else:
+            task_id = int(sys.argv[2])
+            delete(task_id)
+    elif command == "update":
+        if len(sys.argv) < 4:
+            print("Error: please provide a task ID")
+            print('Example: update 1 "Buy groceries and cook dinner"')
+        else:
+             task_id = int(sys.argv[2])
+             new_description = sys.argv[3]
+             update(task_id, new_description )
     else:
-        print(f"Bilinmeyen komut: {command}")
+        print("Command not found")
+        print("available commands: add, update, delete, list, mark-done, mark-in-progress")
+        
 
     
 
