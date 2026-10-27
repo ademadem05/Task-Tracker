@@ -93,6 +93,14 @@ def update(task_id, new_task):
             return
     print(f"Task {task_id} is not found")
 
+
+def parse_id(value):
+    try:
+        return int(value)
+    except ValueError:
+        print("Error: value must be a number")
+        return None
+
 def main():
     # Kullanıcı hiç komut yazmadıysa
     if len(sys.argv) < 2:
@@ -111,38 +119,48 @@ def main():
         if len(sys.argv) < 3:
              list_tasks()       
         else:
-            list_tasks(sys.argv[2])
+            status = sys.argv[2]
+            if status in ["todo", "in-progress", "done"]:
+                list_tasks(status)
+            else:
+                print(f"Error: invalid status '{status}'")
+                print("Valid statuses: todo, in-progress, done")
     elif command == "mark-in-progress":
         if len(sys.argv) < 3:
             print("Error: please provide a task ID")
             print("Example: python task_cli.py mark-in-progress 1")
         else:
-            task_id = int(sys.argv[2])
-            mark_task(task_id, "in-progress")
+            task_id = parse_id(sys.argv[2])
+            if task_id is not None:
+                mark_task(task_id, "in-progress")
 
     elif command == "mark-done":
         if len(sys.argv) < 3:
             print("Error: please provide a task ID")
             print("Example: python task_cli.py mark-done 1")
         else:
-            task_id = int(sys.argv[2])
-            mark_task(task_id, "done")
+            task_id = parse_id(sys.argv[2])
+            if task_id is not None:
+                 mark_task(task_id, "done")
 
     elif command == "delete":
         if len(sys.argv) < 3:
             print("Error: please provide a task ID")
             print("Example: python task_cli.py delete 1")
         else:
-            task_id = int(sys.argv[2])
-            delete(task_id)
+                task_id = parse_id(sys.argv[2])
+                if task_id is not None:
+                    delete(task_id)
+            
     elif command == "update":
         if len(sys.argv) < 4:
             print("Error: please provide a task ID")
             print('Example: update 1 "Buy groceries and cook dinner"')
         else:
-             task_id = int(sys.argv[2])
-             new_description = sys.argv[3]
-             update(task_id, new_description )
+             task_id = parse_id(sys.argv[2])
+             if task_id is not None:
+                new_description = sys.argv[3]
+                update(task_id, new_description)
     else:
         print("Command not found")
         print("available commands: add, update, delete, list, mark-done, mark-in-progress")
