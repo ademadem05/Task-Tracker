@@ -51,13 +51,29 @@ def list_tasks(status=None):
     if tasks:
         if status == None:
             for task in tasks:
-                print(f"[{task["id"]}] {task["description"]}")
+                print(f"[{task["id"]}] {task["description"]} ({task['status']})")
         else:
             for task in tasks:
                 if task["status"] == status:
                    print(f"[{task['id']}] {task['description']} ({task['status']})") 
     else:
         print(f"Upload the tasks, the list is empty")
+
+def mark_task(task_id, new_status):
+    tasks = load_tasks()
+
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = new_status
+            task["updatedAt"] = datetime.now().isoformat()
+            save_tasks(tasks)
+            print(f"Task {task_id} marked as {new_status}")
+            return
+
+        print(f"Task with ID {task_id} not found")
+
+
+
 
 def main():
     # Kullanıcı hiç komut yazmadıysa
@@ -70,7 +86,7 @@ def main():
     if command == "add":
        if len(sys.argv) < 3:
             print(f"Error: please input a description")
-            print(f'xample: python task_cli.py <command> "[arguments]"')
+            print(f'Example: python task_cli.py <command> "[arguments]"')
        else:
             add_task(sys.argv[2])
     elif command == "list":
@@ -78,6 +94,22 @@ def main():
              list_tasks()       
         else:
             list_tasks(sys.argv[2])
+
+    elif command == "mark-in-progress":
+        if len(sys.argv) < 3:
+            print("Error: please provide a task ID")
+            print("Example: python task_cli.py mark-in-progress 1")
+        else:
+            task_id = int(sys.argv[2])
+            mark_task(task_id, "in-progress")
+
+    elif command == "mark-done":
+        if len(sys.argv) < 3:
+            print("Error: please provide a task ID")
+            print("Example: python task_cli.py mark-done 1")
+        else:
+            task_id = int(sys.argv[2])
+            mark_task(task_id, "done")
     else:
         print(f"Bilinmeyen komut: {command}")
 
